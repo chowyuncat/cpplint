@@ -3037,6 +3037,43 @@ class CpplintTest(CpplintTestBase):
         'Namespace should be terminated with "// namespace no_warning"'
         '  [readability/namespace] [5]'))
 
+  def testEndOfNamespaceSemicolon(self):
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                          ['namespace {',
+                           '};',
+
+                           'namespace expected {',
+                           '};',
+
+                           'namespace open_brace_on_newline',
+                           '{',
+                           '};',
+
+                           'namespace outer { namespace nested {',
+                           '}  /*  comments  */  ;',
+                           '};',
+                           ''
+                           ],
+                          error_collector)
+
+    self.assertEquals(1, error_collector.Results().count(
+        'anonymous namespace brace ends with a semicolon'
+        '  [build/namespaces] [5]'))
+    self.assertEquals(1, error_collector.Results().count(
+        'namespace expected brace ends with a semicolon'
+        '  [build/namespaces] [5]'))
+    self.assertEquals(1, error_collector.Results().count(
+        'namespace open_brace_on_newline brace ends with a semicolon'
+        '  [build/namespaces] [5]'))
+    self.assertEquals(1, error_collector.Results().count(
+        'namespace outer brace ends with a semicolon'
+        '  [build/namespaces] [5]'))
+    self.assertEquals(1, error_collector.Results().count(
+        'namespace nested brace ends with a semicolon'
+        '  [build/namespaces] [5]'))
+
+
   def testElseClauseNotOnSameLineAsElse(self):
     self.TestLint('  else DoSomethingElse();',
                   'Else clause should never be on same line as else '

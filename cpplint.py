@@ -2065,8 +2065,17 @@ class _NamespaceInfo(_BlockInfo):
     self.check_namespace_indentation = True
 
   def CheckEnd(self, filename, clean_lines, linenum, error):
-    """Check end of namespace comments."""
+    """Check end of namespace."""
     line = clean_lines.raw_lines[linenum]
+
+    # Look for a semicolon at the end of the namespace
+    if Match(r'}\s*?(/\*.*?\*/)?\s*?\;', line):
+        if self.name:
+          namespace_desc = 'namespace %s' % self.name
+        else:
+          namespace_desc = 'anonymous namespace'
+        error(filename, linenum, 'build/namespaces', 5,
+              '%s brace ends with a semicolon' % namespace_desc)
 
     # Check how many lines is enclosed in this namespace.  Don't issue
     # warning for missing namespace comments if there aren't enough
