@@ -3822,14 +3822,14 @@ class CpplintTest(CpplintTestBase):
       # when the root directory of the repository is properly deduced.
       return
 
-    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
     cpplint._root = 'cpplint'
     self.assertEquals('CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
     # --root flag is ignored if an non-existent directory is specified.
     cpplint._root = 'NON_EXISTENT_DIR'
-    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
 
   def testBuildInclude(self):
